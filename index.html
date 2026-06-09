@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Creature in the Garden</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&family=Space+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1412;
+    --paper: #0d0b0a;
+    --mist: #2a2320;
+    --blood: #8b1a1a;
+    --gold: #c9a96e;
+    --pale: #d4c9bc;
+    --ghost: #6b5f56;
+    --veil: rgba(13,11,10,0.85);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background-color: var(--paper);
+    color: var(--pale);
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-weight: 300;
+    font-size: 19px;
+    line-height: 1.85;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grain texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 999;
+    opacity: 0.35;
+  }
+
+  /* ── COVER ── */
+  .cover {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 4rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cover::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1px;
+    height: 80px;
+    background: linear-gradient(to bottom, var(--blood), transparent);
+  }
+
+  .cover-eye {
+    width: 64px;
+    height: 28px;
+    border: 1.5px solid var(--blood);
+    border-radius: 50%;
+    position: relative;
+    margin-bottom: 3.5rem;
+    animation: eyeblink 6s ease-in-out infinite;
+  }
+  .cover-eye::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 14px;
+    height: 14px;
+    background: var(--blood);
+    border-radius: 50%;
+    box-shadow: 0 0 18px var(--blood);
+  }
+
+  @keyframes eyeblink {
+    0%, 90%, 100% { transform: scaleY(1); }
+    95% { transform: scaleY(0.05); }
+  }
+
+  .cover-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--ghost);
+    margin-bottom: 1.5rem;
+  }
+
+  .cover-title {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-weight: 300;
+    font-size: clamp(2.8rem, 8vw, 6.5rem);
+    line-height: 1.05;
+    color: var(--pale);
+    letter-spacing: -0.01em;
+    margin-bottom: 0.5rem;
+  }
+
+  .cover-title em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .cover-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--ghost);
+    margin-top: 1.5rem;
+    letter-spacing: 0.05em;
+  }
+
+  .cover-divider {
+    width: 60px;
+    height: 1px;
+    background: var(--blood);
+    margin: 2.5rem auto;
+    position: relative;
+  }
+  .cover-divider::before, .cover-divider::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--blood);
+    transform: translateY(-50%);
+  }
+  .cover-divider::before { left: -8px; }
+  .cover-divider::after { right: -8px; }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--ghost);
+    animation: fadepulse 2.5s ease-in-out infinite;
+  }
+
+  @keyframes fadepulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.8; }
+  }
+
+  /* ── STORY BODY ── */
+  .story-wrapper {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 5rem 2rem 8rem;
+  }
+
+  .chapter-mark {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    margin-bottom: 3rem;
+  }
+  .chapter-mark span {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--ghost);
+    white-space: nowrap;
+  }
+  .chapter-mark::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--mist);
+  }
+
+  .prose p {
+    margin-bottom: 0;
+    text-indent: 0;
+    color: var(--pale);
+  }
+
+  .prose p + p {
+    margin-top: 0.2rem;
+  }
+
+  /* Paragraph groupings with breathing room */
+  .prose .beat {
+    margin-top: 2rem;
+  }
+
+  /* Short punchy lines */
+  .prose .terse {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    color: var(--pale);
+    line-height: 2;
+    margin-top: 0.1rem;
+  }
+
+  /* Drop cap */
+  .prose .dropcap::first-letter {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 5.2rem;
+    font-weight: 600;
+    float: left;
+    line-height: 0.78;
+    margin-right: 0.12em;
+    margin-top: 0.08em;
+    color: var(--gold);
+  }
+
+  /* Tense moment — indented single lines */
+  .prose .moment {
+    display: block;
+    text-align: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.15rem;
+    color: var(--ghost);
+    margin: 2.5rem 0;
+    letter-spacing: 0.04em;
+  }
+
+  /* The reveal block */
+  .revelation {
+    border-left: 2px solid var(--blood);
+    padding-left: 1.5rem;
+    margin: 3rem 0;
+  }
+  .revelation p {
+    color: var(--pale);
+    font-size: 1.05rem;
+  }
+
+  /* Section break */
+  .section-break {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    margin: 4rem 0;
+  }
+  .section-break span {
+    font-size: 0.55rem;
+    color: var(--blood);
+    letter-spacing: 0.6em;
+  }
+  .section-break::before, .section-break::after {
+    content: '';
+    flex: 1;
+    max-width: 80px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--blood));
+  }
+  .section-break::after {
+    background: linear-gradient(to left, transparent, var(--blood));
+  }
+
+  /* Hospital chapter */
+  .chapter-ii .chapter-mark span { color: var(--blood); }
+
+  /* Ending */
+  .ending-line {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.35rem;
+    color: var(--gold);
+    text-align: center;
+    margin-top: 4rem;
+    line-height: 1.6;
+  }
+
+  .skull {
+    display: block;
+    text-align: center;
+    font-size: 1.6rem;
+    margin-top: 2rem;
+    opacity: 0.6;
+    filter: sepia(1) hue-rotate(300deg);
+  }
+
+  /* Footer */
+  .story-footer {
+    text-align: center;
+    padding: 3rem 2rem 5rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--ghost);
+    opacity: 0.5;
+  }
+
+  /* Scroll-reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (max-width: 600px) {
+    .story-wrapper { padding: 4rem 1.4rem 6rem; }
+    .cover-title { font-size: clamp(2.2rem, 10vw, 3.5rem); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+    .cover-eye { animation: none; }
+    .scroll-hint { animation: none; opacity: 0.5; }
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<section class="cover">
+  <div class="cover-eye"></div>
+  <p class="cover-label">A Short Story</p>
+  <h1 class="cover-title">The Creature<br><em>in the Garden</em></h1>
+  <div class="cover-divider"></div>
+  <p class="cover-sub">Some monsters only exist in the eye of the beholder.</p>
+  <p class="scroll-hint">Begin &nbsp;↓</p>
+</section>
+
+<!-- STORY -->
+<main class="story-wrapper">
+
+  <!-- Part I -->
+  <div class="chapter-mark reveal"><span>Part One &nbsp;·&nbsp; The Chase</span></div>
+
+  <div class="prose">
+
+    <p class="dropcap beat reveal">David had spent the previous night arguing with everyone.</p>
+    <p class="terse reveal">His wife, Sarah. His son. His daughter.</p>
+    <p class="terse reveal">By midnight, the house was silent, but the bitterness remained.</p>
+
+    <p class="beat reveal">The next day was his birthday.</p>
+    <p class="reveal">The family still organized a small celebration in their garden. There was cake, food, and forced smiles. David sat beside Sarah, pretending everything was normal.</p>
+
+    <p class="beat reveal">That was when he saw it.</p>
+
+    <p class="beat reveal">Near the hedge stood a creature unlike anything he had ever seen. It resembled a cat, but it was far too large. Its fur was pitch black, swallowing the sunlight around it. Its yellow eyes stared directly at him.</p>
+
+    <p class="beat reveal">David immediately looked away.</p>
+    <p class="terse reveal">Maybe he was imagining things.</p>
+    <p class="terse reveal">When he glanced back, the creature was still there.</p>
+    <p class="terse reveal">Nobody else seemed to notice it.</p>
+    <p class="reveal">The family continued celebrating as if nothing was wrong.</p>
+
+    <p class="beat reveal">Minutes later, he looked again.</p>
+    <p class="terse reveal">The creature had moved closer.</p>
+    <p class="terse reveal">Then it took another step.</p>
+    <p class="terse reveal">And another.</p>
+
+    <em class="moment reveal">Panic gripped him.</em>
+
+    <p class="terse beat reveal">David jumped from his chair and ran.</p>
+    <p class="terse reveal">The creature followed.</p>
+    <p class="terse reveal">Through the garden.</p>
+    <p class="terse reveal">Through the house.</p>
+    <p class="terse reveal">Past confused relatives calling his name.</p>
+
+    <p class="beat reveal">David could hear footsteps behind him. He climbed through a window and jumped onto a neighboring property. Hiding behind a wall, he struggled to breathe.</p>
+
+    <p class="beat reveal">A man eventually found him.</p>
+    <p class="terse reveal">"What are you doing here?"</p>
+    <p class="terse reveal">David ignored him and climbed back down.</p>
+
+    <p class="beat reveal">As he entered his father's house next door, his father stared at him.</p>
+    <p class="terse reveal">"What on earth is wrong with you?"</p>
+
+    <p class="beat reveal">Then David saw movement.</p>
+    <p class="terse reveal">The back door slowly opened.</p>
+    <p class="terse reveal">The creature stepped inside.</p>
+    <p class="terse reveal">Its eyes locked onto him.</p>
+
+    <p class="beat reveal">David ran again. Out onto the street. A motorcyclist nearly collided with him. In a desperate panic, David kicked the rider away and sped off on the bike.</p>
+
+    <p class="beat reveal">The creature remained behind him.</p>
+    <p class="terse reveal">Always there.</p>
+    <p class="terse reveal">Always following.</p>
+  </div>
+
+  <div class="section-break reveal"><span>✦ ✦ ✦</span></div>
+
+  <!-- Part II -->
+  <div class="prose">
+    <p class="beat reveal">The chase continued until David reached an old bridge. He abandoned the motorcycle and stumbled toward the center of it.</p>
+
+    <p class="beat reveal">The creature emerged from the darkness.</p>
+    <p class="terse reveal">For the first time, it wasn't running.</p>
+    <p class="reveal">It approached slowly. Carefully. Its head lowered slightly. Its eyes no longer seemed threatening.</p>
+    <p class="reveal">They seemed…</p>
+    <p class="terse reveal"><em>sad.</em></p>
+
+    <p class="beat reveal">David's hand found a knife lying nearby.</p>
+    <p class="terse reveal">The creature took another step forward.</p>
+    <p class="terse reveal">Then another.</p>
+    <p class="reveal">As if it wanted to come closer. As if it wanted to say something.</p>
+    <p class="terse reveal">But fear had already won.</p>
+
+    <div class="revelation reveal">
+      <p>David screamed and charged. The knife plunged into the creature's chest. Once. Twice. Again and again.</p>
+      <p>The creature never fought back.</p>
+      <p>It simply stared at him. Almost disappointed. Almost heartbroken.</p>
+    </div>
+
+    <p class="beat reveal">As its body collapsed onto the bridge, David staggered backward.</p>
+    <p class="terse reveal">Then something strange happened.</p>
+    <p class="terse reveal">The black fur began to disappear.</p>
+    <p class="terse reveal">The enormous body started changing shape.</p>
+    <p class="terse reveal">Shrinking.</p>
+    <p class="terse reveal">Twisting.</p>
+    <p class="terse reveal">Becoming human.</p>
+
+    <p class="beat reveal">David froze. His hands trembled. The knife slipped from his fingers.</p>
+
+    <p class="beat reveal">Lying in a pool of blood before him was Sarah.</p>
+    <p class="terse reveal">His wife.</p>
+    <p class="reveal">The same woman he had argued with the night before. The same woman who had been sitting beside him at the birthday party.</p>
+
+    <p class="beat reveal">Sarah looked up at him one final time. There was no anger in her eyes. Only sadness. Then she stopped moving.</p>
+
+    <p class="beat reveal">David dropped to his knees.</p>
+    <p class="terse reveal">"No…"</p>
+
+    <p class="beat reveal">The realization hit him all at once. The creature had never tried to attack him. It had followed him everywhere but never harmed him. It had only been trying to reach him. Trying to make him stop running. Trying to make him understand.</p>
+    <p class="reveal">Just like Sarah always had.</p>
+    <p class="reveal">And just like every argument they ever had, David had assumed the worst before knowing the truth.</p>
+
+    <em class="moment reveal">Darkness swallowed him.</em>
+  </div>
+
+  <!-- Chapter II -->
+  <div class="section-break reveal"><span>✦ ✦ ✦</span></div>
+  <div class="chapter-ii">
+    <div class="chapter-mark reveal"><span>Part Two &nbsp;·&nbsp; The Hospital</span></div>
+  </div>
+
+  <div class="prose">
+    <p class="beat reveal">David opened his eyes in a hospital bed. Machines beeped around him. His father sat nearby. His children were there too.</p>
+    <p class="terse reveal">But Sarah wasn't.</p>
+
+    <p class="beat reveal">A doctor entered the room.</p>
+    <p class="terse reveal">"You're lucky to be alive."</p>
+    <p class="terse reveal">David looked around.</p>
+    <p class="terse reveal">"Where's Sarah?"</p>
+    <p class="terse reveal">The room fell silent. Nobody answered.</p>
+
+    <p class="beat reveal">The doctor's expression became uneasy.</p>
+    <p class="terse reveal">"You suffered a severe psychological breakdown during your birthday celebration."</p>
+    <p class="terse reveal">David felt his heart racing.</p>
+    <p class="terse reveal">"You ran through several properties, stole a motorcycle, and crashed near the bridge."</p>
+
+    <p class="beat reveal">David shook his head.</p>
+    <p class="terse reveal">"No. Sarah was there. The creature… it became Sarah."</p>
+    <p class="terse reveal">The doctor exchanged glances with David's father. Then he spoke quietly.</p>
+    <p class="terse reveal">"There was never any creature."</p>
+
+    <p class="beat reveal">David stared at him.</p>
+
+    <div class="revelation reveal">
+      <p>"Witnesses say your wife chased after you the entire time, trying to stop you. Near the bridge, during the struggle, you grabbed a knife."</p>
+    </div>
+
+    <p class="terse beat reveal">David's blood turned cold.</p>
+    <p class="terse reveal">"No…"</p>
+    <p class="terse reveal">His father began crying.</p>
+    <p class="terse reveal">The doctor lowered his head.</p>
+    <p class="terse reveal">"Sarah died from the stab wound."</p>
+
+    <p class="beat reveal">The room became silent. David sat frozen.</p>
+    <p class="terse reveal">The monster.</p>
+    <p class="terse reveal">The chase.</p>
+    <p class="terse reveal">The fear.</p>
+    <p class="terse reveal">None of it had been real.</p>
+
+    <p class="beat reveal">The creature he spent the entire day running from was only the distorted image of the person who loved him most.</p>
+    <p class="terse reveal">And in trying to destroy what he feared…</p>
+    <p class="terse reveal">he had killed his own wife.</p>
+
+    <p class="ending-line reveal">Some monsters are only the shapes love takes<br>when we are too afraid to look clearly.</p>
+    <span class="skull reveal">— Yusuf</span>
+  </div>
+
+</main>
+
+<footer class="story-footer">
+  <p>The Creature in the Garden &nbsp;·&nbsp; A Short Story</p>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
