@@ -301,6 +301,42 @@
     filter: sepia(1) hue-rotate(300deg);
   }
 
+  /* Meaning block */
+  .meaning {
+    margin-top: 4rem;
+    padding: 2rem 1.8rem;
+    border-top: 1px solid var(--mist);
+    border-bottom: 1px solid var(--mist);
+  }
+  .meaning-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--blood);
+    margin-bottom: 1.2rem;
+  }
+  .meaning p {
+    font-family: 'Crimson Pro', serif;
+    font-size: 1rem;
+    color: var(--ghost);
+    line-height: 1.9;
+    margin-bottom: 0.6rem;
+  }
+
+  /* Author signature */
+  .sig {
+    display: block;
+    text-align: right;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--gold);
+    margin-top: 2.5rem;
+    letter-spacing: 0.06em;
+    opacity: 0.85;
+  }
+
   /* Footer */
   .story-footer {
     text-align: center;
@@ -463,7 +499,15 @@
     <em class="moment reveal">Darkness swallowed him whole.</em>
 
     <p class="ending-line reveal">The most terrifying thing he had ever seen<br>was never the creature.<br>It was the knife in his own hand.</p>
-    <span class="skull reveal">— BashAFK</span>
+
+    <div class="meaning reveal">
+      <p class="meaning-title">What This Story Means</p>
+      <p>David spent years fighting with Sarah — never truly listening, never truly seeing her. When his mind finally broke, his guilt and fear twisted the one person who loved him into something monstrous. The creature never came to hurt him. It came to reach him.</p>
+      <p>But fear had already made up his mind.</p>
+      <p>The people who love us most can look the most terrifying — when we are running from ourselves.</p>
+    </div>
+
+    <span class="sig reveal">— BashAFK</span>
   </div>
 
 </main>
